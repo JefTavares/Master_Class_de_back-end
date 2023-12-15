@@ -193,7 +193,11 @@ gen:
 Removendo as linhas `cloud project` e `database managed` conforme descrito na [documentação](https://docs.sqlc.dev/en/stable/tutorials/getting-started-postgresql.html#setting-up)
 
 Também posso utilizar algumas configurações extras
+
 ![configs](img/config%20sqlc%20params.png)
+
+> pode se utilizar a biblioteca pgx/v5. Basta incluir a linha sql_package: "pgx/v5" na config do sqlc.yaml linha abaixo do out:
+> [DocRef - pgx](https://docs.sqlc.dev/en/stable/guides/using-go-and-pgx.html)
 
 3. Executar o comando `sqlc generate`
    vai gerar a saida:
