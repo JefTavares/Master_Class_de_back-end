@@ -15,7 +15,7 @@ where id = $1 limit 1;
 -- name: GetAccountForUpdate :one
 select * from account 
 where id = $1 limit 1
-FOR UPDATE;
+FOR NO KEY UPDATE;
 
 -- name: ListAccounts :many
 select * from account 

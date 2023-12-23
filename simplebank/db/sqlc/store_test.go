@@ -17,26 +17,37 @@ func TestTransferTx(t *testing.T) {
 	fmt.Println(">> before:", account1.Balance, account2.Balance)
 
 	// run n concurrent transfer transactions
-	n := 5
+	//mude ocasionamente para 2, isso facitila o debug
+	n := 2
 	amount := int64(10)
 
 	errs := make(chan error)
 	results := make(chan TransferTxResult)
 
 	for i := 0; i < n; i++ {
+		txName := fmt.Sprintf("tx %d", i+1)
 		go func() {
-			result, err := store.TransferTx(context.Background(), TransferTxParams{
+			/*passar no contexto de fundo como o contexto pai, e um par de valores-chave, onde valor é o nome da transação.
+			Aqui diz que a chave não deve ser do tipo string ou de qualquer tipo integrado
+			para evitar colisões entre pacotes.
+			Normalmente devemos definir uma variável do tipo struct{} para a chave de contexto.
+			Vou fazer isso no arquivo store.go porque mais tarde teremos que usar esta chave para obter o nome da transação*/
+			ctx := context.WithValue(context.Background(), txKey, txName)
+			//result, err := store.TransferTx(context.Background(), TransferTxParams{
+			fmt.Println("valor:", amount)
+			result, err := store.TransferTx(ctx, TransferTxParams{
 				FromAccountID: account1.ID,
 				ToAccountID:   account2.ID,
 				Amount:        amount,
 			})
 
+			//quando a goroutine termina ela atribui result e o err aos chan results e errs
 			errs <- err //podemos enviar erros para o canal de erros usando este operador de seta,O canal deve estar à esquerda,
 			results <- result
 		}()
 	}
 
-	//check results
+	//check results - refaço o loop em n
 	existed := make(map[int]bool)
 	for i := 0; i < n; i++ {
 		err := <-errs
