@@ -18,24 +18,23 @@ func TestTransferTx(t *testing.T) {
 
 	// run n concurrent transfer transactions
 	//mude ocasionamente para 2, isso facitila o debug
-	n := 2
+	n := 5
 	amount := int64(10)
 
 	errs := make(chan error)
 	results := make(chan TransferTxResult)
 
 	for i := 0; i < n; i++ {
-		txName := fmt.Sprintf("tx %d", i+1)
+		//txName := fmt.Sprintf("tx %d", i+1) //utiliznado context.withvalue
 		go func() {
 			/*passar no contexto de fundo como o contexto pai, e um par de valores-chave, onde valor é o nome da transação.
 			Aqui diz que a chave não deve ser do tipo string ou de qualquer tipo integrado
 			para evitar colisões entre pacotes.
 			Normalmente devemos definir uma variável do tipo struct{} para a chave de contexto.
 			Vou fazer isso no arquivo store.go porque mais tarde teremos que usar esta chave para obter o nome da transação*/
-			ctx := context.WithValue(context.Background(), txKey, txName)
-			//result, err := store.TransferTx(context.Background(), TransferTxParams{
-			fmt.Println("valor:", amount)
-			result, err := store.TransferTx(ctx, TransferTxParams{
+			//ctx := context.WithValue(context.Background(), txKey, txName)
+			//result, err := store.TransferTx(ctx, TransferTxParams{
+			result, err := store.TransferTx(context.Background(), TransferTxParams{
 				FromAccountID: account1.ID,
 				ToAccountID:   account2.ID,
 				Amount:        amount,
